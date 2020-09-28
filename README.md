@@ -14,4 +14,63 @@ Deliverables
 ****************************
 
 Solution
+Using Apache Kafka and Python-kafka to design Notification system.
 
+Installation
+ Apache Kafka -
+ $useradd kafka -m
+ $passwd kafka
+ $usermod -aG wheel kafka
+ $su -l kafka
+ $mkdir ~/Downloads
+ $tar -xvzf ~/Downloads/kafka-2.6.0-src.tgz --strip 1
+ $vi ~/kafka/config/server.properties
+  -> Add - delete.topic.enable = true
+ 
+ Add service to start stop
+ $sudo vi /etc/systemd/system/zookeeper.service
+  ->
+  [Unit]
+  Requires=network.target remote-fs.target
+  After=network.target remote-fs.target
+
+  [Service]
+  Type=simple
+  User=kafka
+  ExecStart=/home/kafka/kafka/bin/zookeeper-server-start.sh /home/kafka/kafka/config/zookeeper.properties
+  ExecStop=/home/kafka/kafka/bin/zookeeper-server-stop.sh
+  Restart=on-abnormal
+
+  [Install]
+  WantedBy=multi-user.target
+  
+ $sudo vi /etc/systemd/system/kafka.service
+  ->
+  [Unit]
+  Requires=zookeeper.service
+  After=zookeeper.service
+
+  [Service]
+  Type=simple
+  User=kafka
+  ExecStart=/bin/sh -c '/home/kafka/kafka/bin/kafka-server-start.sh /home/kafka/kafka/config/server.properties > /home/kafka/kafka/kafka.log 2>&1'
+  ExecStop=/home/kafka/kafka/bin/kafka-server-stop.sh
+  Restart=on-abnormal
+
+  [Install]
+  WantedBy=multi-user.target
+  
+ Start
+ $sudo systemctl start kafka
+ To ensure that the server has started successfully, check the journal logs for the kafka unit:
+ $journalctl -u kafka 
+
+ You now have a Kafka server listening on port 9092
+ To enable kafka on server boot, run:
+ $sudo systemctl enable kafka
+ 
+ First, create a topic named Target by typing:
+ $~/kafka/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic Target
+  -> Created topic Target.
+ 
+ 
