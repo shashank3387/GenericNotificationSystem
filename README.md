@@ -73,4 +73,21 @@ Installation
  $~/kafka/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic Target
   -> Created topic Target.
  
+ You can create a producer from the command line using the kafka-console-producer.sh script. It expects the Kafka server’s hostname, port, and a topic name as arguments.
+ Publish the string "Hello, World" to the Target topic by typing:
+ $echo "Hello, World" | ~/kafka/bin/kafka-console-producer.sh --broker-list localhost:9092 --topic Target > /dev/null
  
+ Next, you can create a Kafka consumer using the kafka-console-consumer.sh script. It expects the ZooKeeper server’s hostname and port, along with a topic name as arguments.
+ The following command consumes messages from TutorialTopic. Note the use of the --from-beginning flag, which allows the consumption of messages that were published before
+ the consumer was started:
+ $~/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic Target --from-beginning
+ 
+ Describe Topic
+ $~/kafka1/bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group=TargetG --describe
+ 
+
+ Install kafka-python -
+ $pip install kafka-python
+
+
+
